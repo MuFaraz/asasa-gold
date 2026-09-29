@@ -7,7 +7,7 @@ A single-user demo for buying and selling 24K gold at a live PKR/gram rate, with
 - Stack: Next.js 16 (App Router) · TypeScript · Tailwind v4 · Postgres (Neon) · Drizzle ORM · Zod · Vitest
 - Design: Asasa palette (`#0D4A46` `#8CCB50` `#F9FAFA` `#1A1F1B`), mobile-first
 - Read **[WhatIDid.md](./WhatIDid.md)** for the reasoning, assumptions, decisions and known gaps.
-- The full AI-assisted build session is in **[docs/build-record.md](./docs/build-record.md)**.
+- The AI-assisted build session: **[docs/build-record.md](./docs/build-record.md)** (structured English account) and **[docs/build-record-transcript.md](./docs/build-record-transcript.md)** (full raw transcript).
 
 ## Try it (as a reviewer)
 
