@@ -1,5 +1,7 @@
 # Asasa Gold
 
+**Live demo: https://asasa-gold-gamma.vercel.app**
+
 A single-user demo for buying and selling 24K gold at a live PKR/gram rate, with **75-second server-locked quotes**, visible price source and freshness, and safe, exactly-once settlement.
 
 - Stack: Next.js 16 (App Router) · TypeScript · Tailwind v4 · Postgres (Neon) · Drizzle ORM · Zod · Vitest

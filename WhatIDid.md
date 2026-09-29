@@ -39,7 +39,7 @@ Build a small but *trustworthy* gold trading demo: one user, three balances (cus
 ## How I verified it
 
 - `npm test` — pricing parsers/selection/throttling, guardrail, trade maths, insufficient cash/gold/inventory (including a balance change *after* quoting), expiry at exactly 75 s, demo expire, idempotent confirm (sequential, after expiry, and 8 concurrent), conservation of total PKR and gold across every trade, reset.
-- Ran the real app against the real upstreams and fired several parallel confirm requests: exactly one trade was created.
+- Deployed to Vercel + Neon and fired 8 parallel confirm requests at the live URL: exactly one trade was created and all 8 responses returned the same receipt. Both real upstream sources (PakGold, GoldPrice.org) answered from Vercel's network.
 - Drove the UI in a headless browser at a 390 px mobile viewport through buy, double-click confirm, receipt, insufficient gold, expiry, fallback and paused states.
 
 ## Known gaps
@@ -47,6 +47,6 @@ Build a small but *trustworthy* gold trading demo: one user, three balances (cus
 - **Demo controls and state are global and unauthenticated** (the brief excludes auth/admin). Anyone with the link shares one wallet and can reset it.
 - **Upstream endpoints are unofficial.** PakGold's JSON and GoldPrice.org's `dbXRates` feed are the ones their websites use; they have no SLA or documented terms and could change or block datacenter IPs. If both fail the product pauses honestly rather than guessing.
 - **PakGold "rawa" is a local market rate**, not spot; a production system would agree the exact reference price with the business.
-- **Concurrency tests run on PGlite**, which serialises on one connection, so they prove the idempotency logic but not true parallel lock contention. The locking is standard Postgres (`FOR UPDATE` + a UNIQUE constraint) and I'd add a multi-connection test against Neon in CI.
+- **Unit-level concurrency tests run on PGlite**, which serialises on one connection. To cover real lock contention I also fired 8 parallel confirms at the deployed app (Neon Postgres): 8 responses, 1 trade, 1 receipt, balances charged once. That check is manual; I would automate it in CI with a multi-connection test.
 - No Playwright/e2e suite is committed (I verified the UI by scripted browser runs), no rate limiting, no i18n (Urdu), and times display in the viewer's locale.
 - Only the most recent five trades are listed.
