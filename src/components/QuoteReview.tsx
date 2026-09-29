@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { formatGrams, formatPkr } from "@/lib/money";
+import { formatGrams, formatPkr, parsePkr } from "@/lib/money";
 import type { QuoteDto } from "./api-client";
 import { Button, clockTime, cx, Notice, SOURCE_LABEL, useNow } from "./ui";
 
@@ -34,6 +34,16 @@ export function QuoteSummary({ quote }: { quote: QuoteDto }) {
   );
 }
 
+/** Paisa the user typed but is not charged, for a PKR-entered buy (gold rounds down to 1 mg). */
+function roundingLeftover(quote: QuoteDto, entered: string): number {
+  if (quote.side !== "buy" || quote.inputMode !== "pkr") return 0;
+  try {
+    return Math.max(0, parsePkr(entered) - quote.pkrPaisa);
+  } catch {
+    return 0;
+  }
+}
+
 export function QuoteReview({
   quote,
   serverOffsetMs,
@@ -41,6 +51,7 @@ export function QuoteReview({
   error,
   unsure,
   priceChange,
+  enteredAmount,
   onConfirm,
   onCancel,
   onExpired,
@@ -52,6 +63,8 @@ export function QuoteReview({
   /** True when a confirm request was sent but we never heard back. Retrying is safe (idempotent). */
   unsure: boolean;
   priceChange: { from: number; to: number } | null;
+  /** The raw amount the user typed, used to explain any rounding in a PKR-entered buy. */
+  enteredAmount: string;
   onConfirm: () => void;
   onCancel: () => void;
   onExpired: () => void;
@@ -62,6 +75,7 @@ export function QuoteReview({
   const seconds = Math.max(0, Math.ceil(remaining / 1000));
   const pct = Math.min(100, Math.max(0, (remaining / total) * 100));
   const low = seconds <= 15;
+  const leftover = roundingLeftover(quote, enteredAmount);
 
   useEffect(() => {
     // Don't yank the screen away mid-request: the server decides the outcome of an in-flight confirm.
@@ -98,6 +112,12 @@ export function QuoteReview({
         This price is locked for you until the timer ends and includes our {quote.side === "buy" ? "10% buy markup" : "10% sell discount"}
         {quote.guardrailApplied ? ", raised to the minimum guardrail rate" : ""}. No other fees.
       </p>
+
+      {leftover > 0 && (
+        <Notice tone="info" title={`${formatPkr(leftover)} stays in your wallet`}>
+          Gold trades in 0.001 g steps, so we rounded down to {formatGrams(quote.goldMg)} and only charge for that. You never pay more than you entered.
+        </Notice>
+      )}
 
       {unsure && (
         <Notice tone="warn" title="We didn't get a response">

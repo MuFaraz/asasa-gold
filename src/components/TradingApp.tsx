@@ -150,6 +150,7 @@ export function TradingApp({ initial }: { initial: AppState }) {
                   error={error}
                   unsure={unsure}
                   priceChange={flow.priceChange}
+                  enteredAmount={values.amount}
                   onConfirm={() => void confirm(flow.quote)}
                   onCancel={reset}
                   onExpired={onExpired}
