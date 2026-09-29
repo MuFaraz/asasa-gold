@@ -45,14 +45,14 @@ export function RateCard({ state }: { state: AppState }) {
         {customerPrices && !paused ? (
           <div className="mt-5 grid grid-cols-2 gap-3">
             <div className="rounded-xl bg-white/8 p-4">
-              <p className="text-xs text-white/60">You buy at</p>
+              <p className="text-xs text-white/60">You buy at · PKR/g</p>
               <p className="mt-1 text-lg font-semibold tabular-nums sm:text-2xl">{formatPkr(customerPrices.buyPaisa).replace("PKR ", "")}</p>
-              <p className="mt-0.5 text-xs text-white/55">PKR/g · {customerPrices.guardrailApplied ? "guardrail floor" : "market + 10%"}</p>
+              <p className="mt-0.5 text-xs text-white/55">{customerPrices.guardrailApplied ? "Guardrail floor" : "Market + 10%"}</p>
             </div>
             <div className="rounded-xl bg-white/8 p-4">
-              <p className="text-xs text-white/60">You sell at</p>
+              <p className="text-xs text-white/60">You sell at · PKR/g</p>
               <p className="mt-1 text-lg font-semibold tabular-nums sm:text-2xl">{formatPkr(customerPrices.sellPaisa).replace("PKR ", "")}</p>
-              <p className="mt-0.5 text-xs text-white/55">PKR/g · market − 10%</p>
+              <p className="mt-0.5 text-xs text-white/55">Market − 10%</p>
             </div>
           </div>
         ) : (
